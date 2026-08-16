@@ -1,6 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import App from './App';
 import { LocaleProvider } from './context/LocaleContext';
 import './styles/index.css';
@@ -12,10 +12,10 @@ if (!root) {
 
 createRoot(root).render(
   <StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <LocaleProvider>
         <App />
       </LocaleProvider>
-    </BrowserRouter>
+    </HashRouter>
   </StrictMode>,
 );

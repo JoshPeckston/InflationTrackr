@@ -19,6 +19,8 @@ at once.
 
 ## Web app
 
+From the repo root (or `cd web` first):
+
 ```bash
 cd web
 npm install
@@ -26,12 +28,23 @@ npm test
 npm run dev
 ```
 
-The dev server listens on `http://localhost:5173`. Production build:
+Then open **http://127.0.0.1:5173** — use the IPv4 address, not `localhost`.
+Safari on macOS often resolves `localhost` to IPv6 (`::1`) and shows
+“Safari Can’t Connect to the Server” if the page is opened that way, or if
+the app is only running on a remote machine.
+
+Production build:
 
 ```bash
 npm run build
 npm run preview
 ```
+
+Preview is at **http://127.0.0.1:4173**.
+
+After GitHub Pages is enabled on this repository (Settings → Pages → GitHub
+Actions), the archive is also served at
+`https://joshpeckston.github.io/InflationTrackr/`.
 
 ## Data
 
