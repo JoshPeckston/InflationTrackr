@@ -42,6 +42,7 @@ export function GoodCard({ good, country, currency, year }: Props) {
           <strong>{nowPrice == null ? '—' : formatMoney(nowPrice, currency)}</strong>
         </div>
       </div>
+      <span className="card-follow">Open the line →</span>
     </Link>
   );
 }
