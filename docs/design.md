@@ -1,67 +1,59 @@
-# InflationTrackr React Native App Design
+# InflationTrackr design
 
-This document outlines the design for a React Native application that
-tracks prices of products over time and helps visualize inflation.
+The product is a **historic price archive**: a way to feel how the cost of
+ordinary goods and services moved, country by country, and to reread those
+prices in another currency.
 
-## Features
+## Why a web ledger, not the mobile stub
 
-- **Historical Price Tracking**: Users can enter product names, purchase
-  dates, price, currency, and location.
-- **Categories**: Products can be organized into custom categories for
-  easier filtering.
-- **Currency Conversion**: When prices are entered in different
-  currencies, the app automatically converts them to a base currency for
-  comparison (requires an exchange-rate service or offline data).
-- **Sharing**: Interesting price changes or histories can be shared to
-  social media or messaging apps using the native share sheet.
-- **Alerts**: Users can receive notifications when prices change
-  significantly or drop below a desired threshold.
-- **Search & Filters**: Quickly filter by category, date range, price
-  range, location or inflation rate.
-- **Map View**: Display price entries on a map to visualize geographic
-  differences.
+The repository began as a four-tab React Native shell. Historic inflation is
+mostly an argument with a chart, a year, and a comparison. That wants a wide
+page, a persistent country/currency bar, and room for a sentence. The web app
+is the first complete expression of that idea.
 
-## Navigation
+## Interface
 
-The main interface uses a bottom tab navigator with four tabs:
+The masthead is the instrument panel:
 
-1. **Home** – Dashboard and quick stats.
-2. **Stats** – Add/view entries and see charts.
-3. **Map** – Map of price entries by location.
-4. **Explore** – Discover trends and comparisons.
+1. **Country** chooses the economy (CPI, shelf prices, first available year).
+2. **Display currency** is a lens. It does not change the underlying series.
+3. **Year** is a scrubber. Every card answers “what did this cost then?”
 
-## Data Model (simplified)
+Surfaces:
+
+| Route | Job |
+| --- | --- |
+| `/` | National basket as museum cards, with sparklines |
+| `/good/:id` | One item’s line, real-value translation, cross-country table |
+| `/compare` | Two goods in one country, plus the left good abroad |
+| `/calculator` | Walk an amount through CPI, then spend it on the shelf |
+| `/methodology` | Observed vs interpolated, FX caveats |
+
+Visual language: Fraunces for headlines, Outfit for UI, IBM Plex Mono for
+money. Paper and ink by default; a night theme for late reading. Rising prices
+lean rose/copper; real declines lean pine.
+
+## Data model
 
 ```ts
-interface PriceEntry {
-  id: string;
-  productName: string;
-  category: string;
-  price: number;
-  currency: string;
-  normalizedPrice: number; // converted to a base currency
-  date: string; // ISO date
-  location: string; // e.g. city or GPS coordinates
-}
+Country { code, currency, firstYear, blurb }
+Currency { code, symbol, usdPerUnit }
+Good { id, category, unitLabel }
+CPI anchors, 2015 = 100
+Price anchors in local currency at selected years
 ```
 
-## Implementation Notes
+Missing years are filled with exponential interpolation between anchors
+(`web/src/lib/series.ts`). Real-value math uses that country’s CPI
+(`web/src/lib/inflation.ts`). Display conversion goes through a USD snapshot
+(`web/src/lib/money.ts`).
 
-- Use **React Navigation** for bottom tabs.
-- Store data locally with a database such as **SQLite** or **Async
-  Storage**, and sync with a cloud service if needed.
-- For currency conversion, consider a third-party API or regularly
-  updated offline rates.
-- Charts can be implemented with libraries like
-  `react-native-chart-kit`.
-- Map view can be built with `react-native-maps`.
+Brazil starts in 1995 and Mexico in 1993 so redenomination does not invent a
+false century of bread prices. Pre-euro German and French prices are
+euro-equivalents.
 
-## Getting Started
+## What this is not
 
-1. Install dependencies with `npm install` or `yarn`.
-2. Run the Metro bundler with `npx react-native start`.
-3. Build the app on a device or emulator with `npx react-native run-ios`
-   or `npx react-native run-android`.
-
-This repo currently contains only example code to illustrate the app
-structure.
+It is not a live supermarket feed, a historic FX tape, or a substitute for a
+national statistical office. Housing is a typical inner-city one-bedroom, not
+every dwelling in the country.
